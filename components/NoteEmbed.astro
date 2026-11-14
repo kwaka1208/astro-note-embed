@@ -6,6 +6,10 @@
  * 使い方: <NoteEmbed url="https://note.com/<user>/n/<key>" />
  *
  * ※ note のスクリプトとiframeを読み込むため、ページ表示時に外部通信が発生します。
+ *
+ * ※ 1ページに複数置くと、下の <script> も同じ数だけ出る。note 公式の埋め込みコードと同じ形のままにしている。
+ *    embed.js は2回目以降は何もしない（window.NOTE_EMBEDS で確かめている）ので、動作は変わらない。
+ *    1つにまとめるにはインラインのスクリプトが要り、CSP を設定しているサイトで許可の追加が必要になる。
  */
 interface Props {
   /** 記事URL（https://note.com/<user>/n/<key>） */

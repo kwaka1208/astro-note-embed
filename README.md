@@ -232,6 +232,8 @@ import NoteEmbed from 'astro-note-embed/NoteEmbed.astro';
 
 note のスクリプト（`https://note.com/scripts/embed.js`）は、設置したページの中で動きます。Content Security Policy を設定しているサイトでは、`script-src` と `frame-src` に `https://note.com` を加えてください。
 
+1ページに `NoteEmbed` を複数置くと、同じ `<script>` がその数だけ出ます。note のスクリプトは2回目以降は何もしないので、動作は変わりません。
+
 ## 自動更新とつなぐ
 
 ビルド時の取得だけでは、ビルドし直すまで新しい記事が出ません。公開後に一覧を新しくする仕組み（サーバーで RSS を取り直して JSON に書き出し、ブラウザで一覧を差し替えるなど）は、**このパッケージには含めていません**。自分で用意する場合のつなぎ目として、`live` を渡すと次の属性と `<template>` を出します。
