@@ -216,6 +216,31 @@ test('id が重複した記事は先のものを残し、後のものは飛ば�
   assert.equal(ctx2.items.get('dup1').title, '後の記事');
 });
 
+test('応答が 5 MB を超えたら、取得の失敗として扱う', async () => {
+  const ctx = validatingContext();
+  const huge = async () => new Response(`<rss><channel>${dated('ok1')}<!--${'x'.repeat(5 * 1024 * 1024)}--></channel></rss>`);
+  await withFetch(huge, () => noteMagazineLoader({ rssUrl: 'https://note.com/x/rss', fallback }).load(ctx));
+  assert.deepEqual([...ctx.items.keys()], ['sample1']);
+  assert.ok(ctx.logs.some(([level, message]) => level === 'warn' && message.includes('応答が大きすぎます')));
+});
+
+test('応答が分かれて届いても、文字を壊さずに読む', async () => {
+  const bytes = new TextEncoder().encode(`<rss><channel>${dated('ok1').replace('<title>ok1</title>', '<title>題名😀</title>')}</channel></rss>`);
+  const chunked = async () =>
+    new Response(
+      new ReadableStream({
+        start(controller) {
+          // 1バイトずつ送る（絵文字や日本語の途中で分かれる）
+          for (const byte of bytes) controller.enqueue(Uint8Array.of(byte));
+          controller.close();
+        },
+      }),
+    );
+  const ctx = validatingContext();
+  await withFetch(chunked, () => noteMagazineLoader({ rssUrl: 'https://note.com/x/rss' }).load(ctx));
+  assert.equal(ctx.items.get('ok1').title, '題名😀');
+});
+
 test("'throw' はビルドを止める", async () => {
   const ctx = fakeContext();
   await assert.rejects(

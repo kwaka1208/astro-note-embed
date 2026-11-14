@@ -176,6 +176,28 @@ export function parseNoteRss(xml: string, options: NoteParseOptions = {}): NoteR
   });
 }
 
+/** 応答の大きさの上限（5 MB）。RSS としてはありえない大きさの応答を、メモリに読み込まないため */
+const MAX_RESPONSE_BYTES = 5 * 1024 * 1024;
+
+/** 応答を文字列で読む。上限を超えたら、そこで読むのをやめて例外を投げる */
+async function readText(res: Response, maxBytes: number): Promise<string> {
+  if (!res.body) return '';
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return text + decoder.decode();
+    size += value.byteLength;
+    if (size > maxBytes) {
+      await reader.cancel();
+      throw new Error(`応答が大きすぎます（${maxBytes} バイトを超えました）`);
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+}
+
 export function noteMagazineLoader(options: NoteLoaderOptions) {
   const {
     rssUrl,
@@ -224,7 +246,7 @@ export function noteMagazineLoader(options: NoteLoaderOptions) {
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const parsed = parseNoteRss(await res.text(), { excerptLength, excerptIgnore });
+        const parsed = parseNoteRss(await readText(res, MAX_RESPONSE_BYTES), { excerptLength, excerptIgnore });
         entries = await validate(parsed);
         if (parsed.length > 0 && entries.length === 0) throw new Error('記事を1件も読み取れませんでした');
         logger.info(`note から ${entries.length} 件の記事を取得しました（${rssUrl}）`);
