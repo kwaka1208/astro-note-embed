@@ -16,7 +16,7 @@ export interface Props {
   dateSuffix?: string;
   /** 日付を決めるタイムゾーン */
   timeZone?: string;
-  /** リンクの target。'_blank' のときは rel="noopener noreferrer" を付ける */
+  /** リンクの target。'_self'・'_parent'・'_top' 以外のときは rel="noopener noreferrer" を付ける */
   target?: string;
   /** 本文の抜粋を出すか */
   showExcerpt?: boolean;
@@ -36,14 +36,16 @@ const {
   showThumbnail = false,
   newTabLabel = '（新しいタブで開きます）',
 } = Astro.props;
-const blank = target === '_blank';
+// 同じタブで開く指定（_self・_parent・_top・空文字）以外は、新しいタブかウィンドウが開く。
+// '_Blank' のような大文字まじりや、名前を付けたウィンドウも含む
+const opensNew = !['', '_self', '_parent', '_top'].includes(target.toLowerCase());
 ---
 
 <a
   class="note-item"
   href={article?.url}
   target={target}
-  rel={blank ? 'noopener noreferrer' : undefined}
+  rel={opensNew ? 'noopener noreferrer' : undefined}
   data-note-link
 >
   {
@@ -66,7 +68,7 @@ const blank = target === '_blank';
   >
   <span class="note-item__title" data-note-title>{article?.title}</span>
   {showExcerpt && <span class="note-item__excerpt" data-note-excerpt>{article?.excerpt}</span>}
-  {blank && newTabLabel && <span class="note-item__new-tab">{newTabLabel}</span>}
+  {opensNew && newTabLabel &&<span class="note-item__new-tab">{newTabLabel}</span>}
 </a>
 
 <style is:global>

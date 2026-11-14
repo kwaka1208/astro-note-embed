@@ -121,7 +121,7 @@ npm install astro-note-embed
 | `dateStyle` | `'long' \| 'dot'` | `'long'` | 日付の書式 |
 | `dateSuffix` | `string` | `''` | 日付のうしろに付ける文字（例：`' · note'`） |
 | `timeZone` | `string` | `'Asia/Tokyo'` | 日付を決めるタイムゾーン |
-| `target` | `string` | `'_blank'` | リンクの `target`。`'_blank'` のときは `rel="noopener noreferrer"` を付ける |
+| `target` | `string` | `'_blank'` | リンクの `target`。`'_self'`・`'_parent'`・`'_top'` 以外のとき（新しいタブやウィンドウで開くとき）は `rel="noopener noreferrer"` を付ける |
 | `sampleNotice` | `string \| false` | 「noteの記事を取得できなかったため、サンプル記事を表示しています。」 | `fallback` の記事を表示しているときの注意書き。`false` で出さない |
 | `live` | `{ endpoint: string } \| false` | `false` | 自動更新とつなぐ属性を出す（下の「自動更新とつなぐ」） |
 | `class` | `string` | なし | 一覧の外側の要素に付けるクラス |
@@ -147,7 +147,7 @@ npm install astro-note-embed
 |---|---|---|---|
 | `showExcerpt` | `boolean` | `true` | 本文の抜粋を出す |
 | `showThumbnail` | `boolean` | `false` | 見出し画像を出す |
-| `newTabLabel` | `string` | 「（新しいタブで開きます）」 | `target="_blank"` のときに読み上げで伝える文（画面には出さない）。空文字で出さない |
+| `newTabLabel` | `string` | 「（新しいタブで開きます）」 | 新しいタブやウィンドウで開くとき（`target` が `'_self'`・`'_parent'`・`'_top'` 以外のとき）に読み上げで伝える文（画面には出さない）。空文字で出さない |
 
 出力される HTML：
 
