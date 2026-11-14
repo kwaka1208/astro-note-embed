@@ -202,6 +202,20 @@ test('fallback の記事もスキーマに通らなければ飛ばす（ビル�
   assert.deepEqual([...ctx.items.keys()], ['sample1']);
 });
 
+test('id が重複した記事は先のものを残し、後のものは飛ばす', async () => {
+  const ctx = validatingContext();
+  const second = dated('dup1').replace('<title>dup1</title>', '<title>後の記事</title>');
+  await withFetch(respond(dated('dup1') + second + dated('ok1')), () => noteMagazineLoader({ rssUrl: 'https://note.com/x/rss' }).load(ctx));
+  assert.deepEqual([...ctx.items.keys()], ['dup1', 'ok1']);
+  assert.equal(ctx.items.get('dup1').title, 'dup1');
+  assert.ok(ctx.logs.some(([level, message]) => level === 'warn' && message.includes('重複')));
+
+  // 先の記事がスキーマに通らなければ、後の記事を使う
+  const ctx2 = validatingContext();
+  await withFetch(respond(undated('dup1') + second), () => noteMagazineLoader({ rssUrl: 'https://note.com/x/rss' }).load(ctx2));
+  assert.equal(ctx2.items.get('dup1').title, '後の記事');
+});
+
 test("'throw' はビルドを止める", async () => {
   const ctx = fakeContext();
   await assert.rejects(

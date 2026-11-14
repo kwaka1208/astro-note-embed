@@ -193,12 +193,21 @@ export function noteMagazineLoader(options: NoteLoaderOptions) {
     load: async ({ store, logger, parseData }) => {
       type Entry = { id: string; data: Record<string, unknown> };
 
-      /** スキーマに通った記事だけを残す。通らない記事は理由をログに出して飛ばす（1件のためにビルドを止めない） */
+      /**
+       * スキーマに通った記事だけを残す。通らない記事は理由をログに出して飛ばす（1件のためにビルドを止めない）。
+       * id が同じ記事は先のものを残す（store は id ごとに1件なので、黙って上書きさせない）。
+       */
       const validate = async (candidates: Entry[]): Promise<Entry[]> => {
         const valid: Entry[] = [];
+        const seen = new Set<string>();
         for (const entry of candidates) {
+          if (seen.has(entry.id)) {
+            logger.warn(`記事（${entry.id}）は id が重複しているので飛ばします（先の記事を残します）`);
+            continue;
+          }
           try {
             valid.push({ id: entry.id, data: await parseData(entry) });
+            seen.add(entry.id);
           } catch (error) {
             logger.warn(`記事（${entry.id}）を読み取れなかったので飛ばします: ${(error as Error).message}`);
           }
