@@ -2,7 +2,7 @@
 
 このパッケージの変更を記録します。書式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) にならい、バージョンは [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
-## [0.1.0] - 未公開
+## [0.1.0] - 2026-11-14
 
 ### 追加
 
