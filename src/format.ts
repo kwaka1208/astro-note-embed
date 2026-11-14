@@ -20,8 +20,8 @@ export function isoNoteDate(date: Date, timeZone = 'Asia/Tokyo'): string {
   return new Intl.DateTimeFormat('sv-SE', { timeZone }).format(date);
 }
 
-/** 記事を新しい順に並べ、limit があれば先頭から切り出す */
+/** 記事を新しい順に並べ、limit があれば先頭から切り出す（0 と負の数は 0 件。省略したときだけ全件） */
 export function sortNoteArticles<T extends { pubDate: Date }>(articles: readonly T[], limit?: number): T[] {
   const sorted = [...articles].sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
-  return limit ? sorted.slice(0, limit) : sorted;
+  return limit === undefined ? sorted : sorted.slice(0, Math.max(0, limit));
 }

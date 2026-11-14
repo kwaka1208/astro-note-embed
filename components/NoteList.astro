@@ -11,7 +11,7 @@ import type { NoteDateStyle } from '../dist/format.js';
 export interface Props {
   /** 表示する記事（新しい順に並べたもの） */
   articles: NoteArticle[];
-  /** 表示する件数。live のときは差し替え後の件数（data-limit）にもなる */
+  /** 表示する件数。省略すると全件、0 は 0 件。live のときは差し替え後の件数（data-limit）にもなる */
   limit?: number;
   /** 1件分を描くコンポーネント。article と、下の dateStyle などの共通の props を受け取る */
   item?: (props: any) => any;
@@ -50,7 +50,8 @@ const {
   ...attributes
 } = Astro.props;
 
-const shown = limit ? articles.slice(0, limit) : articles;
+// 0 と負の数は 0 件。省略したときだけ全件
+const shown = limit === undefined ? articles : articles.slice(0, Math.max(0, limit));
 const isSample = shown.some((a) => a.isSample);
 const common = { dateStyle, dateSuffix, timeZone, target, ...itemProps };
 ---

@@ -100,7 +100,7 @@ npm install astro-note-embed
 
 | 関数 | 内容 |
 |---|---|
-| `sortNoteArticles(articles, limit?)` | 新しい順に並べ、`limit` 件に切る |
+| `sortNoteArticles(articles, limit?)` | 新しい順に並べ、`limit` 件に切る。`limit` を省略すると全件、`0` は 0 件 |
 | `formatNoteDate(date, style?, timeZone?)` | 日付を文字列にする。`style` は `'long'`（2026年11月7日）か `'dot'`（2026.11.07）。`timeZone` の既定は `'Asia/Tokyo'` |
 | `isoNoteDate(date, timeZone?)` | `<time datetime>` 用の `YYYY-MM-DD` |
 | `parseNoteRss(xml, options?)` | RSS の文字列から記事を取り出す（通信はしない）。`options` は `excerptLength`・`excerptIgnore`。RSS として読めないときは例外を投げる |
@@ -115,7 +115,7 @@ npm install astro-note-embed
 | props | 型 | 既定 | 内容 |
 |---|---|---|---|
 | `articles` | `NoteArticle[]` | （必須） | 表示する記事（新しい順に並べたもの） |
-| `limit` | `number` | なし（全件） | 表示する件数 |
+| `limit` | `number` | なし（全件） | 表示する件数。`0` は 0 件 |
 | `item` | コンポーネント | `NoteItem` | 1件分を描くコンポーネント（下の「1件分の見た目を変える」） |
 | `itemProps` | `object` | `{}` | `item` に追加で渡す props（例：`{ showThumbnail: true }`） |
 | `dateStyle` | `'long' \| 'dot'` | `'long'` | 日付の書式 |

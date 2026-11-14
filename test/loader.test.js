@@ -113,6 +113,13 @@ test('日付の書式と並べ替え', () => {
   assert.deepEqual(sorted.map((a) => a.pubDate.getTime()), [3, 2]);
 });
 
+test('並べ替えの limit：省略は全件、0 と負の数は 0 件', () => {
+  const articles = [{ pubDate: new Date(1) }, { pubDate: new Date(2) }];
+  assert.equal(sortNoteArticles(articles).length, 2);
+  assert.equal(sortNoteArticles(articles, 0).length, 0);
+  assert.equal(sortNoteArticles(articles, -1).length, 0);
+});
+
 // loader の取得失敗時の扱い（fetch を差し替えて試す）
 function fakeContext() {
   const items = new Map();
