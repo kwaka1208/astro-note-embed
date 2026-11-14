@@ -1,11 +1,11 @@
 # astro-note-embed
 
-[Astro](https://astro.build/) のサイトに、[note](https://note.com/) のマガジン（またはユーザー）の記事一覧を表示する部品です。
+[Astro](https://astro.build/) のサイトに、[note](https://note.com/) のマガジン（またはユーザー）の記事一覧を表示するコンポーネントです。
 
 - **Content Loader**：ビルド時に note の RSS を取得し、記事を Content Collections に入れます。ページを開いた人のブラウザから note へのリクエストは発生しません。
 - **表示コンポーネント**：記事の一覧（`NoteList`）、記事1件の既定の見た目（`NoteItem`）、note 公式の埋め込み（`NoteEmbed`）。
 
-> **非公式の部品です。** note株式会社とは関係がなく、note株式会社が提供・保証するものではありません。「note」はnote株式会社の登録商標です。
+> **非公式のコンポーネントです。** note株式会社とは関係がなく、note株式会社が提供・保証するものではありません。「note」はnote株式会社の登録商標です。
 
 ## 必要なもの
 
