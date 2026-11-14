@@ -2,7 +2,7 @@
 
 [Astro](https://astro.build/) のサイトに、[note](https://note.com/) のマガジン（またはユーザー）の記事一覧を表示するコンポーネントです。
 
-- **Content Loader**：ビルド時に note の RSS を取得し、記事を Content Collections に入れます。ページを開いた人のブラウザから note へのリクエストは発生しません。
+- **Content Loader**：ビルド時に note の RSS を取得し、記事を Content Collections に入れます。一覧を表示するだけなら、ページを開いた人のブラウザから note へのリクエストは発生しません（見出し画像を出すときと、`NoteEmbed` を使うときは発生します）。
 - **表示コンポーネント**：記事の一覧（`NoteList`）、記事1件の既定の見た目（`NoteItem`）、note 公式の埋め込み（`NoteEmbed`）。
 
 > **非公式のコンポーネントです。** note株式会社とは関係がなく、note株式会社が提供・保証するものではありません。「note」はnote株式会社の登録商標です。
@@ -60,7 +60,7 @@ npm install astro-note-embed
 | `rssUrl` | `string` | （必須） | RSS の URL。マガジンは `https://note.com/<user>/m/<key>/rss`、ユーザーの全記事は `https://note.com/<user>/rss` |
 | `onError` | `'fallback' \| 'empty' \| 'throw'` | `'fallback'` | 取得に失敗したときの扱い（下の「取得に失敗したとき」） |
 | `fallback` | `NoteFallbackArticle[]` | `[]` | 取得に失敗したときに表示する記事 |
-| `excerptLength` | `number` | `90` | 本文の抜粋の最大文字数。超えた分は `…` で切る |
+| `excerptLength` | `number` | `90` | 本文の抜粋の最大文字数（絵文字も1文字と数える）。超えた分は `…` で切る |
 | `excerptIgnore` | `string[]` | `[]` | 抜粋から取り除く定型文 |
 | `userAgent` | `string` | `'astro-note-embed (build)'` | 取得時の User-Agent |
 | `timeout` | `number` | `15000` | 取得の待ち時間の上限（ミリ秒） |
@@ -70,10 +70,10 @@ npm install astro-note-embed
 | 項目 | 型 | 内容 |
 |---|---|---|
 | `title` | `string` | 記事のタイトル |
-| `url` | `string` | 記事の URL |
+| `url` | `string` | 記事の URL（`https:` のものだけ） |
 | `pubDate` | `Date` | 公開日時 |
-| `excerpt` | `string` | 本文の冒頭のプレーンテキスト（HTML タグは除去済み） |
-| `thumbnail` | `string \| undefined` | 見出し画像の URL |
+| `excerpt` | `string` | 本文の冒頭のプレーンテキスト。本文に書かれた `<` などの文字を含むことがあるので、HTML としては挿入しないでください |
+| `thumbnail` | `string \| undefined` | 見出し画像の URL（`https:` のものだけ） |
 | `creatorName` | `string \| undefined` | 書き手の名前 |
 | `isSample` | `boolean` | `true` のときは、取得に失敗して `fallback` の記事を表示している |
 
@@ -89,6 +89,13 @@ npm install astro-note-embed
 
 どの場合も、ビルドのログに理由が出ます。
 
+次の場合も、取得の失敗として扱います。
+
+- 応答が RSS として読めないとき（お知らせの画面が返ってきたときなど）
+- 記事を1件も読み取れないとき（note の仕様が変わったときなど）
+
+一部の記事だけが読み取れないとき（日付がない、URL が `https:` でないなど）は、その記事を飛ばして続けます。飛ばした記事と理由はビルドのログに出ます。`fallback` の記事も同じ扱いです。
+
 ### そのほかに使える関数
 
 | 関数 | 内容 |
@@ -96,7 +103,7 @@ npm install astro-note-embed
 | `sortNoteArticles(articles, limit?)` | 新しい順に並べ、`limit` 件に切る |
 | `formatNoteDate(date, style?, timeZone?)` | 日付を文字列にする。`style` は `'long'`（2026年11月7日）か `'dot'`（2026.11.07）。`timeZone` の既定は `'Asia/Tokyo'` |
 | `isoNoteDate(date, timeZone?)` | `<time datetime>` 用の `YYYY-MM-DD` |
-| `parseNoteRss(xml, options?)` | RSS の文字列から記事を取り出す（通信はしない）。`options` は `excerptLength`・`excerptIgnore` |
+| `parseNoteRss(xml, options?)` | RSS の文字列から記事を取り出す（通信はしない）。`options` は `excerptLength`・`excerptIgnore`。RSS として読めないときは例外を投げる |
 | `toExcerpt(html, maxLength, ignore?)` | HTML からプレーンテキストの抜粋を作る |
 
 ## NoteList
@@ -221,6 +228,8 @@ import NoteEmbed from 'astro-note-embed/NoteEmbed.astro';
 |---|---|---|---|
 | `url` | `string` | （必須） | 記事の URL |
 | `title` | `string` | 「noteの記事」 | iframe の `title`（読み上げ用） |
+
+note のスクリプト（`https://note.com/scripts/embed.js`）は、設置したページの中で動きます。Content Security Policy を設定しているサイトでは、`script-src` と `frame-src` に `https://note.com` を加えてください。
 
 ## 自動更新とつなぐ
 

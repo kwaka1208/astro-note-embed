@@ -1,6 +1,6 @@
 {
   "name": "astro-note-embed",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Astro のサイトに note の記事一覧を表示する部品（ビルド時に RSS を取得する Content Loader と表示コンポーネント）。非公式。",
   "type": "module",
   "license": "MIT",
