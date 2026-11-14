@@ -2,6 +2,12 @@
 
 このパッケージの変更を記録します。書式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) にならい、バージョンは [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
+## [0.1.1] - 2026-11-14
+
+### 変更
+
+- 依存する fast-xml-parser を `^5.12.1` 以上にした。5.11.2 以下には、不正な XML で処理が止まるなどの脆弱性がある（GHSA-37qj-frw5-hhjh ほか）
+
 ## [0.1.0] - 2026-11-14
 
 ### 追加
