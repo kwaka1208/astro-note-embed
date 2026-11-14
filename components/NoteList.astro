@@ -1,0 +1,104 @@
+---
+/**
+ * note の記事の一覧。記事の配列を受け取り、<ul> で並べる。
+ * 1件分の見た目は item で差し替えられる（既定は NoteItem）。
+ * live を渡すと、自動更新のスクリプトとつなぐための data-note-* 属性と <template> を出す（スクリプトは含まない）。
+ */
+import NoteItem from './NoteItem.astro';
+import type { NoteArticle } from '../dist/index.js';
+import type { NoteDateStyle } from '../dist/format.js';
+
+export interface Props {
+  /** 表示する記事（新しい順に並べたもの） */
+  articles: NoteArticle[];
+  /** 表示する件数。live のときは差し替え後の件数（data-limit）にもなる */
+  limit?: number;
+  /** 1件分を描くコンポーネント。article と、下の dateStyle などの共通の props を受け取る */
+  item?: (props: any) => any;
+  /** item に追加で渡す props（例：{ showThumbnail: true }） */
+  itemProps?: Record<string, unknown>;
+  /** 日付の書式（long：2026年11月7日、dot：2026.11.07） */
+  dateStyle?: NoteDateStyle;
+  /** 日付のうしろに付ける文字 */
+  dateSuffix?: string;
+  /** 日付を決めるタイムゾーン */
+  timeZone?: string;
+  /** リンクの target */
+  target?: string;
+  /** fallback の記事を表示しているときの注意書き。false で出さない */
+  sampleNotice?: string | false;
+  /** 自動更新とつなぐ。endpoint は記事一覧の JSON の URL */
+  live?: { endpoint: string } | false;
+  /** 一覧の外側の要素に付けるクラス */
+  class?: string;
+  /** そのほかの属性は、一覧の外側の要素に付ける */
+  [attribute: string]: unknown;
+}
+
+const {
+  articles,
+  limit,
+  item: Item = NoteItem,
+  itemProps = {},
+  dateStyle = 'long',
+  dateSuffix = '',
+  timeZone = 'Asia/Tokyo',
+  target = '_blank',
+  sampleNotice = 'noteの記事を取得できなかったため、サンプル記事を表示しています。',
+  live = false,
+  class: className,
+  ...attributes
+} = Astro.props;
+
+const shown = limit ? articles.slice(0, limit) : articles;
+const isSample = shown.some((a) => a.isSample);
+const common = { dateStyle, dateSuffix, timeZone, target, ...itemProps };
+---
+
+<div
+  {...attributes}
+  class:list={['note-list', className]}
+  data-note-list={live ? '' : undefined}
+  data-note-endpoint={live ? live.endpoint : undefined}
+  data-limit={live ? limit : undefined}
+  data-date-style={live ? dateStyle : undefined}
+  data-date-suffix={live && dateSuffix ? dateSuffix : undefined}
+>
+  {
+    isSample && sampleNotice && (
+      <p class="note-list__notice" role="note" data-note-notice>
+        {sampleNotice}
+      </p>
+    )
+  }
+
+  <ul class="note-list__items" data-note-items>
+    {
+      shown.map((article) => (
+        <li class="note-list__item">
+          <Item article={article} {...common} />
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    live && (
+      <template data-note-template>
+        <li class="note-list__item">
+          <Item {...common} />
+        </li>
+      </template>
+    )
+  }
+</div>
+
+<style is:global>
+  :where(.note-list__items) {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

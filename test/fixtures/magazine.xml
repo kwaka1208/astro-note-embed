@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- テスト用の架空のマガジン。実在の note のアカウント・記事ではない -->
+<rss xmlns:note="https://note.com" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>架空のマガジン</title>
+    <description>テスト用</description>
+    <link>https://note.com/example_user/m/m0000000000aa</link>
+    <language>ja</language>
+    <item>
+      <title>春の作業日のお知らせ</title>
+      <media:thumbnail>https://assets.st-note.com/production/uploads/images/1/example.png?width=800</media:thumbnail>
+      <description><![CDATA[<p name="a1" id="a1">4月の作業日は&nbsp;2回です。<br/>道具は&amp;こちらで&lt;用意&gt;します。</p><h2>持ち物</h2><p>軍手と&quot;飲み物&quot;、それから&#39;帽子&#39;。※この記事はAIで作成しています。</p><br/><a href='https://note.com/example_user/n/n0000000000a1'>続きをみる</a>]]></description>
+      <note:creatorName>架空の書き手</note:creatorName>
+      <pubDate>Sat, 07 Nov 2026 20:40:19 +0900</pubDate>
+      <link>https://note.com/example_user/n/n0000000000a1</link>
+      <guid>https://note.com/example_user/n/n0000000000a1</guid>
+    </item>
+    <item>
+      <title>サムネイルのない記事</title>
+      <description><![CDATA[<p>短い本文。</p>]]></description>
+      <pubDate>Sat, 31 Oct 2026 23:30:00 +0900</pubDate>
+      <link>https://note.com/example_user/n/n0000000000a2</link>
+    </item>
+    <item>
+      <title>リンクのない項目（取り込まない）</title>
+      <description><![CDATA[<p>本文</p>]]></description>
+      <pubDate>Fri, 30 Oct 2026 10:00:00 +0900</pubDate>
+    </item>
+  </channel>
+</rss>

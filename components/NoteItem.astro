@@ -1,0 +1,98 @@
+---
+/**
+ * 記事1件の既定の見た目。NoteList が使う。
+ * article を渡さないと、自動更新で記事を流し込むための空のひな形になる（data-note-* 属性だけを持つ）。
+ * 見た目は最小限。クラス名（note-item・note-item__*）に利用者の CSS を当てて上書きする。
+ */
+import type { NoteArticle } from '../dist/index.js';
+import { formatNoteDate, isoNoteDate, type NoteDateStyle } from '../dist/format.js';
+
+export interface Props {
+  /** 表示する記事。省略するとひな形になる */
+  article?: NoteArticle;
+  /** 日付の書式（long：2026年11月7日、dot：2026.11.07） */
+  dateStyle?: NoteDateStyle;
+  /** 日付のうしろに付ける文字（例：' · note'） */
+  dateSuffix?: string;
+  /** 日付を決めるタイムゾーン */
+  timeZone?: string;
+  /** リンクの target。'_blank' のときは rel="noopener noreferrer" を付ける */
+  target?: string;
+  /** 本文の抜粋を出すか */
+  showExcerpt?: boolean;
+  /** サムネイルを出すか */
+  showThumbnail?: boolean;
+  /** 新しいタブで開くことを読み上げで伝える文（画面には出さない）。空文字で出さない */
+  newTabLabel?: string;
+}
+
+const {
+  article,
+  dateStyle = 'long',
+  dateSuffix = '',
+  timeZone = 'Asia/Tokyo',
+  target = '_blank',
+  showExcerpt = true,
+  showThumbnail = false,
+  newTabLabel = '（新しいタブで開きます）',
+} = Astro.props;
+const blank = target === '_blank';
+---
+
+<a
+  class="note-item"
+  href={article?.url}
+  target={target}
+  rel={blank ? 'noopener noreferrer' : undefined}
+  data-note-link
+>
+  {
+    showThumbnail && (article?.thumbnail || !article) && (
+      <img
+        class="note-item__thumb"
+        src={article?.thumbnail}
+        alt=""
+        width="800"
+        height="419"
+        loading="lazy"
+        decoding="async"
+        hidden={!article}
+        data-note-img
+      />
+    )
+  }
+  <time class="note-item__date" datetime={article && isoNoteDate(article.pubDate, timeZone)} data-note-date
+    >{article && formatNoteDate(article.pubDate, dateStyle, timeZone) + dateSuffix}</time
+  >
+  <span class="note-item__title" data-note-title>{article?.title}</span>
+  {showExcerpt && <span class="note-item__excerpt" data-note-excerpt>{article?.excerpt}</span>}
+  {blank && newTabLabel && <span class="note-item__new-tab">{newTabLabel}</span>}
+</a>
+
+<style is:global>
+  :where(.note-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  :where(.note-item__thumb) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1.91 / 1;
+    object-fit: cover;
+  }
+
+  :where(.note-item__title) {
+    font-weight: 700;
+  }
+
+  :where(.note-item__new-tab) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

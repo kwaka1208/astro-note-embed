@@ -1,0 +1,54 @@
+{
+  "name": "astro-note-embed",
+  "version": "0.1.0",
+  "description": "Astro のサイトに note の記事一覧を表示する部品（ビルド時に RSS を取得する Content Loader と表示コンポーネント）。非公式。",
+  "type": "module",
+  "license": "MIT",
+  "author": "crossroads inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwaka1208/astro-note-embed.git"
+  },
+  "homepage": "https://github.com/kwaka1208/astro-note-embed#readme",
+  "keywords": [
+    "astro",
+    "astro-component",
+    "astro-loader",
+    "note",
+    "rss"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./NoteList.astro": "./components/NoteList.astro",
+    "./NoteItem.astro": "./components/NoteItem.astro",
+    "./NoteEmbed.astro": "./components/NoteEmbed.astro"
+  },
+  "files": [
+    "dist",
+    "components",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "npm run build && node --test test/*.test.js",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "astro": "^7.0.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.3.0"
+  },
+  "devDependencies": {
+    "astro": "^7.4.7",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

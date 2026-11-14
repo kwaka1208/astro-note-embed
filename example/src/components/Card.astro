@@ -1,0 +1,47 @@
+---
+/**
+ * 1件分の見た目を差し替える例。NoteList の item に渡す。
+ * article がないときは、自動更新のためのひな形（data-note-* 属性だけ）になるように書く。
+ */
+import type { NoteArticle, NoteDateStyle } from 'astro-note-embed';
+import { formatNoteDate, isoNoteDate } from 'astro-note-embed';
+
+interface Props {
+  article?: NoteArticle;
+  dateStyle?: NoteDateStyle;
+  timeZone?: string;
+}
+
+const { article, dateStyle = 'dot', timeZone = 'Asia/Tokyo' } = Astro.props;
+---
+
+<a class="card" href={article?.url} target="_blank" rel="noopener noreferrer" data-note-link>
+  <img src={article?.thumbnail} alt="" hidden={!article?.thumbnail} data-note-img />
+  <time datetime={article && isoNoteDate(article.pubDate, timeZone)} data-note-date
+    >{article && formatNoteDate(article.pubDate, dateStyle, timeZone)}</time
+  >
+  <span class="title" data-note-title>{article?.title}</span>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    border: 1px solid #ccd;
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    width: 100%;
+    aspect-ratio: 1.91 / 1;
+    object-fit: cover;
+  }
+
+  .title {
+    font-weight: 700;
+  }
+</style>

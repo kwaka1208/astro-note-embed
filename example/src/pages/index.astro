@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import { sortNoteArticles } from 'astro-note-embed';
+import NoteList from 'astro-note-embed/NoteList.astro';
+import Card from '../components/Card.astro';
+
+const articles = sortNoteArticles((await getCollection('notes')).map((entry) => entry.data));
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>astro-note-embed の例</title>
+  </head>
+  <body>
+    <main>
+      <h1>astro-note-embed の例</h1>
+
+      <h2>既定の見た目</h2>
+      <NoteList articles={articles} limit={5} />
+
+      <h2>1件分を差し替え、自動更新とつなぐ属性も出す</h2>
+      <NoteList
+        class="cards"
+        articles={articles}
+        limit={3}
+        item={Card}
+        dateStyle="dot"
+        live={{ endpoint: '/data/notes.json' }}
+      />
+    </main>
+  </body>
+</html>
+
+<style>
+  main {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 1rem;
+    font-family: system-ui, sans-serif;
+    line-height: 1.7;
+  }
+
+  /* 一覧の中の要素はパッケージ側のコンポーネントが描くので、:global で当てる */
+  .cards :global(.note-list__items) {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+</style>

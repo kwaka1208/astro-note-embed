@@ -1,0 +1,34 @@
+---
+/**
+ * note 公式の埋め込みウィジェットで、記事を1件だけ埋め込むコンポーネント。
+ * 一覧は NoteList で出し、こちらは「特定の記事を本文中で紹介したい」ときに使う。
+ *
+ * 使い方: <NoteEmbed url="https://note.com/<user>/n/<key>" />
+ *
+ * ※ note のスクリプトとiframeを読み込むため、ページ表示時に外部通信が発生します。
+ */
+interface Props {
+  /** 記事URL（https://note.com/<user>/n/<key>） */
+  url: string;
+  /** iframe の title（読み上げ用） */
+  title?: string;
+}
+
+const { url, title = 'noteの記事' } = Astro.props;
+const key = url.match(/\/n\/([a-z0-9]+)/i)?.[1];
+
+if (!key) {
+  throw new Error(`NoteEmbed: 記事URLの形式が正しくありません: ${url}`);
+}
+---
+
+<div class="note-embed-wrap">
+  <iframe
+    class="note-embed"
+    src={`https://note.com/embed/notes/${key}`}
+    title={title}
+    loading="lazy"
+    style="border: 0; display: block; max-width: 99%; width: 494px; padding: 0px; margin: 10px 0px; position: static; visibility: visible;"
+    height="400"></iframe>
+</div>
+<script is:inline async src="https://note.com/scripts/embed.js" charset="utf-8"></script>

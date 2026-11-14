@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- テスト用の架空のマガジン（記事が1件だけ） -->
+<rss xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>架空のマガジン</title>
+    <item>
+      <title>1件だけの記事</title>
+      <media:thumbnail url="https://assets.st-note.com/production/uploads/images/2/example.png"/>
+      <description><![CDATA[<p>本文</p>]]></description>
+      <pubDate>Mon, 02 Nov 2026 09:00:00 +0900</pubDate>
+      <link>https://note.com/example_user/n/n0000000000b1</link>
+    </item>
+  </channel>
+</rss>
